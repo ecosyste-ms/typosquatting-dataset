@@ -33,7 +33,11 @@ These classifications match the algorithms in [andrew/typosquatting](https://git
 | delimiter | Change/add/remove - _ . | my-package -> my_package |
 | word_order | Reorder words | foo-bar -> bar-foo |
 | plural | Singularize/pluralize | request -> requests |
-| numeral | Number/word swap | detectron2 -> detectron4 |
+| misspelling | Common typos | library -> libary |
+| numeral | Number/word swap | lib2 -> libtwo |
+| bitflip | Single-bit errors (bitsquatting) | google -> coogle |
+| adjacent_insertion | Insert adjacent keyboard key | google -> googhle |
+| double_hit | Replace double chars with adjacent | google -> giigle |
 | other | Attack types not fitting other categories | -- |
 
 ## Summary
