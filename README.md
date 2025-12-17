@@ -2,7 +2,7 @@
 
 A curated dataset of known package typosquats from public security research. Maps malicious packages to their legitimate targets with ecosystem, classification, and source attribution.
 
-Useful for testing [typosquatting detection tools](https://github.com/andrew/typosquatting) and integration into [ecosyste.ms/packages](https://github.com/ecosyste-ms/packages).
+Useful for testing [typosquatting detection tools](https://github.com/andrew/typosquatting) and integration into [packages.ecosyste.ms](https://packages.ecosyste.ms).
 
 ## Data Format
 
@@ -38,6 +38,7 @@ These classifications match the algorithms in [andrew/typosquatting](https://git
 | bitflip | Single-bit errors (bitsquatting) | google -> coogle |
 | adjacent_insertion | Insert adjacent keyboard key | google -> googhle |
 | double_hit | Replace double chars with adjacent | google -> giigle |
+| combosquatting | Add common package suffixes | lodash -> lodash-js |
 | other | Attack types not fitting other categories | -- |
 
 ## Summary
@@ -114,7 +115,7 @@ Detects typosquatting by analyzing lexical similarity and popularity metrics. Fl
 ## Related Projects
 
 - [andrew/typosquatting](https://github.com/andrew/typosquatting) - Generate typosquat variations for package names
-- [ecosyste.ms/packages](https://github.com/ecosyste-ms/packages) - Open source package metadata service
+- [packages.ecosyste.ms](https://packages.ecosyste.ms) - Open source package metadata service
 
 ## Contributing
 
