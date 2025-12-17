@@ -112,10 +112,54 @@ Analytical pipeline identifying 300+ malware instances across RubyGems, npm, and
 
 Detects typosquatting by analyzing lexical similarity and popularity metrics. Flags unknown packages with names similar to popular ones before installation. Achieved 0.5% false positive rate and discovered a high-profile npm typosquat that was subsequently removed.
 
+## Tools
+
+**[olsenbudanur/anti-typosquatting](https://github.com/olsenbudanur/anti-typosquatting)** - npm install wrapper that detects potential typosquats using Levenshtein distance against the top 10,000 packages.
+
+**[Karneades/psyposquatter](https://github.com/Karneades/psyposquatter)** - PowerShell tool that generates name permutations and checks PSGallery for existing typosquats.
+
+**[tatianahub/typoschecker](https://github.com/tatianahub/typoschecker)** - Python tool that scans requirements files for packages with names similar to popular PyPI packages.
+
+**[Xapollon430/typosquating](https://github.com/Xapollon430/typosquating)** - npm typosquatting detector using Levenshtein distance against popular packages.
+
+**[rustfoundation/typomania](https://github.com/rustfoundation/typomania)** - Rust library providing typosquatting detection primitives, adaptable to any package registry.
+
+**[mt3443/typogard](https://github.com/mt3443/typogard)** - Client-side npm tool that checks packages and transitive dependencies against known typosquatting transformations.
+
+**[rangertaha/urlinsane](https://github.com/rangertaha/urlinsane)** - Domain typosquatting tool with 24 generation algorithms and DNS/GeoIP/redirect checking. Written in Go.
+
 ## Related Projects
 
 - [andrew/typosquatting](https://github.com/andrew/typosquatting) - Generate typosquat variations for package names
 - [packages.ecosyste.ms](https://packages.ecosyste.ms) - Open source package metadata service
+
+### packages.ecosyste.ms API
+
+The package_names endpoint can help identify potential typosquats by searching for packages with similar prefixes or postfixes to popular package names.
+
+```
+GET /api/v1/registries/{registry}/package_names
+```
+
+**Parameters:**
+- `prefix` - filter by package names starting with string (case insensitive)
+- `postfix` - filter by package names ending with string (case insensitive)
+- `page`, `per_page` - pagination
+- `sort`, `order` - sorting
+
+**Examples:**
+```
+# Find RubyGems packages ending in "ails" (potential "rails" typosquats)
+https://packages.ecosyste.ms/api/v1/registries/rubygems.org/package_names?postfix=ails
+
+# Find RubyGems packages starting with "rai" (potential "rails" typosquats)
+https://packages.ecosyste.ms/api/v1/registries/rubygems.org/package_names?prefix=rai
+
+# Find npm packages starting with "reac" (potential "react" typosquats)
+https://packages.ecosyste.ms/api/v1/registries/npmjs.org/package_names?prefix=reac
+```
+
+Full API documentation: [packages.ecosyste.ms/docs](https://packages.ecosyste.ms/docs)
 
 ## Contributing
 
