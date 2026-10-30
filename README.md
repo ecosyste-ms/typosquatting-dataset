@@ -1,6 +1,6 @@
 # Typosquatting Dataset
 
-A curated dataset of known package typosquats from public security research. Maps malicious packages to their legitimate targets with ecosystem, classification, and source attribution.
+A curated dataset of package-name pairs from public typosquatting research and detection tests. Includes reported attacks, research demonstrations, and synthetic examples with ecosystem, classification, and source attribution.
 
 Useful for testing [typosquatting detection tools](https://github.com/andrew/typosquatting) and integration into [packages.ecosyste.ms](https://packages.ecosyste.ms).
 
@@ -10,7 +10,7 @@ The `typosquats.csv` file contains:
 
 | Field | Description |
 |-------|-------------|
-| malicious_package | The typosquatting package name |
+| malicious_package | The variant name; this existing column name does not imply that every entry contains malware |
 | target_package | The legitimate package being squatted |
 | ecosystem | Package ecosystem (pypi, npm, crates.io, go, github_actions, rubygems, maven, nuget) |
 | registry | Registry URL |
@@ -19,7 +19,7 @@ The `typosquats.csv` file contains:
 
 ## Classification Types
 
-These classifications match the algorithms in [andrew/typosquatting](https://github.com/andrew/typosquatting#algorithms):
+These classifications describe name transformations using the categories in [andrew/typosquatting](https://github.com/andrew/typosquatting#algorithms). They describe the spelling relationship, without attributing a cause or intent. A generator's supported characters and affixes may cover only part of a category.
 
 | Classification | Description | Example |
 |----------------|-------------|---------|
@@ -38,16 +38,22 @@ These classifications match the algorithms in [andrew/typosquatting](https://git
 | bitflip | Single-bit errors (bitsquatting) | google -> coogle |
 | adjacent_insertion | Insert adjacent keyboard key | google -> googhle |
 | double_hit | Replace double chars with adjacent | google -> giigle |
-| combosquatting | Add common package suffixes | lodash -> lodash-js |
-| other | Attack types not fitting other categories | -- |
+| combosquatting | Add package prefixes or suffixes | lodash -> lodash-js |
+| other | Combined edits or transformations outside the categories above | npm-run-all -> npmrunnall |
 
 ## Summary
 
-This curated dataset contains 143 typosquatting entries drawn from larger malicious package databases. The source repositories collectively document tens of thousands of malicious packages, but many lack clear target package mappings. This dataset focuses on confirmed typosquats where both the malicious package and its intended target are known.
+This dataset contains 167 name pairs. Research demonstrations and synthetic examples are included because they exercise the same name comparisons as reported attacks. Inclusion does not establish that a package is malicious or that every version was affected.
 
-**By ecosystem:** PyPI (95), npm (35), Go (8), GitHub Actions (4), crates.io (1)
+**By ecosystem:** PyPI (95), npm (37), RubyGems (15), Go (10), GitHub Actions (8), crates.io (2)
 
-**By classification:** replacement (28), omission (27), addition (24), transposition (22), repetition (11), other (9), delimiter (7), plural (6), homoglyph (4), word_order (2), vowel_swap (2), numeral (1)
+**By classification:** other (62), replacement (16), omission (15), transposition (13), repetition (10), addition (10), combosquatting (8), delimiter (7), vowel_swap (6), plural (5), bitflip (5), homoglyph (4), adjacent_insertion (4), word_order (2)
+
+Apply registry rules when using these pairs to test a detector. For example, PyPI treats `my_package`, `my.package`, and `my-package` as [the same normalized name](https://packaging.python.org/en/latest/specifications/name-normalization/). Those rows exercise delimiter transformations, but do not describe separately registrable packages.
+
+Some inherited pairs need context beyond spelling. [Pillow-SIMD](https://pypi.org/project/pillow-simd/) is a Pillow fork. The `torchtriton` row preserves a prefix comparison with `triton`; the [documented incident](https://pytorch.org/blog/compromised-nightly-dependency/) involved dependency confusion between registries using the same `torchtriton` name. `npm-cli-flag` is a placeholder target for two packages named after command-line options.
+
+The GitHub Actions examples added from [zizmor's typosquat-uses audit](https://github.com/zizmorcore/zizmor/pull/1985) are synthetic test cases. Its fixtures also include `actions/chckout` as a negative case against `actions/checkout`, because the owner is unchanged. That distinction is useful when testing namespace-aware detection alongside raw spelling comparisons.
 
 ## Data Sources
 
@@ -92,7 +98,25 @@ Proposal for "social distancing" rules blocking similar names to top packages. R
 Seven malicious Go packages impersonating github.com/areknoster/hypert and github.com/loov/layout libraries. Used array-based obfuscation to hide shell commands that download and execute malware loaders targeting Linux and macOS.
 
 **[Orca Security: GitHub Actions Typosquatting](https://orca.security/resources/blog/typosquatting-in-github-actions/)**
-Research demonstrating GitHub Actions organization typosquatting. Created fake organizations like "actons" (targeting "actions"), "circelci" (targeting "circleci"), and "aws-action" (targeting "aws-actions"). Found 158+ repositories referencing the malicious "action" org.
+Research demonstrating GitHub Actions organization typosquatting. Created proof-of-concept organizations like "actons" (targeting "actions"), "circelci" (targeting "circleci"), and "aws-action" (targeting "aws-actions"). Found 158+ repositories referencing the "action" org.
+
+**[OpenSourceMalware: StubMaker RubyGems Campaign](https://opensourcemalware.com/blog/stubmaker-rubygems-windows-infostealer)**
+Documents variants of bundler, activesupport, i18n, and rake. The dataset includes the 14 names with identified targets; the report leaves the targets of `joxn` and `reaker` unclear.
+
+**[ReversingLabs: Mining for Malicious Ruby Gems](https://www.reversinglabs.com/blog/mining-for-malicious-ruby-gems)**
+Documents `atlas-client` targeting `atlas_client`, a delimiter substitution in RubyGems.
+
+**[Socket: Go Decimal Library Typosquat](https://socket.dev/blog/popular-go-decimal-library-typosquat-dns-backdoor)**
+Documents `github.com/shopsprint/decimal` targeting `github.com/shopspring/decimal` by replacing the last character of the owner name.
+
+**[Socket: Go UUID Library Typosquats](https://socket.dev/blog/malicious-go-packages-impersonate-googles-uuid-library-and-exfiltrate-data)**
+Documents `github.com/bpoorman/uuid` targeting `github.com/pborman/uuid`. The owner name combines a transposition with a repeated `o`.
+
+**[Socket: Rust Logger Impersonation](https://socket.dev/blog/two-malicious-rust-crates-impersonate-popular-logger-to-steal-wallet-keys)**
+Documents `faster_log` targeting `fast_log`. The dataset includes this name pair from the report.
+
+**[Socket: npm SSH Backdoors](https://socket.dev/blog/malicious-npm-packages-inject-ssh-backdoors-via-typosquatted-libraries)**
+Documents six pairs targeting babel-cli, chokidar, streamsearch, ssh2, npm-run-all, and node-pty. The dataset includes all six.
 
 ### Academic Research
 
@@ -163,7 +187,9 @@ Full API documentation: [packages.ecosyste.ms/docs](https://packages.ecosyste.ms
 
 ## Contributing
 
-Additional typosquatting examples with confirmed target packages are welcome. Please include source attribution.
+Additional name pairs from incidents, research, and detector tests are welcome. Include a source that identifies the target, and state when examples are synthetic. Use `other` when a pair combines edits that cannot be described by a single category.
+
+Run `ruby test/dataset_test.rb` to check CSV structure, duplicate pairs, basic transformation labels, and summary counts. The tests require the `csv` and `test-unit` gems and do not access the network or install any package named in the dataset.
 
 ## License
 
